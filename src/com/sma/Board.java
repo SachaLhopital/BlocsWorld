@@ -1,7 +1,7 @@
 package com.sma;
 
 import com.sma.Agents.Agent;
-import com.sma.Agents.AgentCognitive;
+import com.sma.Agents.AgentCognitiveBrodcast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,19 +125,42 @@ public class Board {
     public synchronized void broadcast(Agent a) {
         for(int i = 0; i < NB_COLUMN; i++) {
             for(int j = 0; j < agents.get(i).size(); j++) {
-                ((AgentCognitive) agents.get(i).get(j)).setBroadcaster(a);
+                ((AgentCognitiveBrodcast) agents.get(i).get(j)).setBroadcaster(a);
             }
         }
     }
 
-    public int getEmptyColumnIfExist() {
-        for(int i = 0; i < agents.size(); i++) {
-            if(agents.get(i).size() == 0) {
-                return i;
-            }
-        }
-        return 0;
+    public Agent getHeadOfColumn(int columnNumber) {
+        return agents.get(columnNumber).size() > 0
+                ? agents.get(columnNumber).get(agents.get(columnNumber).size() - 1)
+                : null;
     }
 
+    public int getEmptiestColumn() {
+
+        int emptiestColumn = -1;
+
+        for(int i = 0; i < NB_COLUMN; i++) {
+
+            int currentSize = agents.get(i).size();
+
+            if(emptiestColumn == -1 || currentSize < emptiestColumn) {
+                emptiestColumn = currentSize;
+            }
+        }
+        return emptiestColumn;
+    }
+
+    public int getNumberOfAgentProperlyPositionnedForColumn(int columnNumber) {
+
+        int nbAgentProperlyPositionned = 0;
+
+        for(int i = 0; i < agents.get(columnNumber).size(); i++) {
+            if(! agents.get(columnNumber).get(i).isAtTargetPosition()) {
+                nbAgentProperlyPositionned--;
+            }
+        }
+        return nbAgentProperlyPositionned;
+    }
 
 }

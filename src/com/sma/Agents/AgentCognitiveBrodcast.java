@@ -2,13 +2,13 @@ package com.sma.Agents;
 
 import com.sma.Main;
 
-public class AgentCognitive extends Agent {
+public class AgentCognitiveBrodcast extends Agent {
 
     private Agent broadcaster;
     private int targetColumn;
     private int forbiddenColumn;
 
-    public AgentCognitive(Agent targetLowerAgent, char image) {
+    public AgentCognitiveBrodcast(Agent targetLowerAgent, char image) {
         super(targetLowerAgent, image);
 
         if(targetLowerAgent == null) {
@@ -130,11 +130,11 @@ public class AgentCognitive extends Agent {
 
         if(getTargetColumn() == -1){
             //On se déplace pour quelqu'un d'autre qui nous interdit d'aller en forbiddenColumn
-            ((AgentCognitive) getHigherAgent()).setForbiddenColumn(getForbiddenColumn());
+            ((AgentCognitiveBrodcast) getHigherAgent()).setForbiddenColumn(getForbiddenColumn());
         } else {
             //On lui demande de se pousser pour notre propre interet
             System.out.println(getImage() + " interdit à " + getHigherAgent().getImage() + " d'aller en " + getTargetColumn());
-            ((AgentCognitive) getHigherAgent()).setForbiddenColumn(getTargetColumn());
+            ((AgentCognitiveBrodcast) getHigherAgent()).setForbiddenColumn(getTargetColumn());
         }
     }
 }

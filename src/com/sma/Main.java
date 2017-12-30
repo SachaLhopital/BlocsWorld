@@ -1,7 +1,8 @@
 package com.sma;
 
 import com.sma.Agents.Agent;
-import com.sma.Agents.AgentCognitive;
+import com.sma.Agents.AgentCognitiveBrodcast;
+import com.sma.Agents.AgentCognitiveIncreasing;
 import com.sma.Agents.AgentReactive;
 
 import java.util.Scanner;
@@ -22,7 +23,8 @@ public class Main {
 
         System.out.println("\nSelectionner la partie avec la laquelle vous souhaitez jouer : " +
                 "\n- 1 : Partie 1 - Eco-Résolution " +
-                "\n- 2 : Partie 2 - Stratégie de coordination par Brodcasting");
+                "\n- 2 : Partie 2 - Stratégie de coordination par Brodcasting" +
+                "\n- 3 : Partie 2 bis - Stratégie de coordination par Ordre Croissant");
 
         switch (sc.nextLine()) {
 
@@ -36,18 +38,26 @@ public class Main {
                 break;
 
             case "2":
+                a = new AgentCognitiveBrodcast(null, 'A');
+                b = new AgentCognitiveBrodcast(a, 'B');
+                c = new AgentCognitiveBrodcast(b, 'C');
+                d = new AgentCognitiveBrodcast(c, 'D');
 
-                a = new AgentCognitive(null, 'A');
-                b = new AgentCognitive(a, 'B');
-                c = new AgentCognitive(b, 'C');
-                d = new AgentCognitive(c, 'D');
+                configureAndRun(a, b, c, d);
+                break;
+
+            case "3":
+                a = new AgentCognitiveIncreasing(null, 'A');
+                b = new AgentCognitiveIncreasing(a, 'B');
+                c = new AgentCognitiveIncreasing(b, 'C');
+                d = new AgentCognitiveIncreasing(c, 'D');
 
                 configureAndRun(a, b, c, d);
                 break;
 
             default:
                 System.out.println("Saisie non reconnue."
-                        + "\nAssurez-vous d'avoir saisie un chiffre (1 ou 2)\n");
+                        + "\nAssurez-vous d'avoir saisie un chiffre (1, 2 ou 3)\n");
         }
     }
 
