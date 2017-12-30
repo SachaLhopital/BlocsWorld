@@ -51,7 +51,7 @@ public class AgentCognitiveIncreasing extends Agent {
             for(int i = 0; i < Main.board.NB_COLUMN; i++) {
 
                 if((i == Main.board.getColumn(this))) {
-                    ponderationValue = -1;
+                    ponderationValue = -10;
                 } else {
 
                     if(shouldBeUnderMe(Main.board.getHeadOfColumn(i))) {

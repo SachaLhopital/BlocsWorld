@@ -71,13 +71,16 @@ public abstract class Agent extends Thread {
      */
     public void seDeplacer(int x) {
 
-        if(getHigherAgent() == null) {
-            //on se déplace
-            Main.board.moveAgentTo(this, x);
-            setMustMove(false);
-        } else {
-            //on demande à l'agent du dessus de se pousser
-            pousser();
+        synchronized (Main.board) {
+
+            if (getHigherAgent() == null) {
+                //on se déplace
+                Main.board.moveAgentTo(this, x);
+                setMustMove(false);
+            } else {
+                //on demande à l'agent du dessus de se pousser
+                pousser();
+            }
         }
     }
 
