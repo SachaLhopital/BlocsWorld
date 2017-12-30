@@ -2,8 +2,6 @@ package com.sma.Agents;
 
 import com.sma.Main;
 
-import java.util.HashMap;
-
 /***
  * Specific agent that doesn't take place on the bottom of someone grather then himself.
  * For instance : 'A' will never take place above 'B', unless there is no other options.
@@ -36,6 +34,13 @@ public class AgentCognitiveIncreasing extends Agent {
         }
     }
 
+    /***
+     * Find a column where the agent can move.
+     * A ponderation is created to find the better column :
+     * > If the column allow the agent to reach it's target position : +10
+     * > If the column break the order rule : -2
+     * > If the column doesn't break the order rule but doesn't allow the agent to reach it's target position : 1
+     */
     private void moves() {
         synchronized (Main.board) {
 
@@ -50,7 +55,7 @@ public class AgentCognitiveIncreasing extends Agent {
                 } else {
 
                     if(shouldBeUnderMe(Main.board.getHeadOfColumn(i))) {
-                        ponderationValue = Main.board.getHeadOfColumn(i) == getTargetLowerAgent() ? 10 : 1;
+                        ponderationValue = Main.board.isColumnInFinalState(i) ? 10 : 1;
                     } else {
                         ponderationValue = -2;
                     }
@@ -66,31 +71,7 @@ public class AgentCognitiveIncreasing extends Agent {
     }
 
     /***
-     * Moves an agent to the xth column of the board
-     * The agent only moves if there is nobody above him
-     * @param x
-     */
-    private void seDeplacer(int x) {
-
-        if(getHigherAgent() == null) {
-            //on se déplace
-            Main.board.moveAgentFromTo(this, x);
-            setMustMove(false);
-        } else {
-            //on demande à l'agent du dessus de se pousser
-            pousser();
-        }
-    }
-
-    /***
-     * Push the agent above the current agent
-     */
-    private void pousser() {
-        getHigherAgent().setMustMove(true);
-    }
-
-    /***
-     * Check if agent should be under me or not
+     * Check if agent specified in parameter should be under the current agent or not.
      * @param agent
      * @return
      */
