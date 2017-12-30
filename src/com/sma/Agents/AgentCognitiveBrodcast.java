@@ -2,6 +2,9 @@ package com.sma.Agents;
 
 import com.sma.Main;
 
+/***
+ * Cognitive Agent that brodcast others when reach it's target position
+ */
 public class AgentCognitiveBrodcast extends Agent {
 
     private Agent broadcaster;
@@ -45,6 +48,7 @@ public class AgentCognitiveBrodcast extends Agent {
         return forbiddenColumn;
     }
 
+    @Override
     public void run() {
 
         while(Main.board.isNotComplete()) {
@@ -79,31 +83,15 @@ public class AgentCognitiveBrodcast extends Agent {
         }
     }
 
-    private void moves() {
-        synchronized (Main.board) {
-
-            for(int i = 0; i < Main.board.NB_COLUMN; i++) {
-                if(i != getForbiddenColumn() && i != Main.board.getColumn(this)) {
-                    seDeplacer(i);
-                    break;
-                }
-            }
-        }
-    }
-
-    /***
-     * Moves an agent to the xth column of the board
-     * The agent only moves if there is nobody above him
-     * @param x
-     */
-    private void seDeplacer(int x) {
+    @Override
+    public void seDeplacer(int x) {
 
         synchronized (Main.board) {
 
             if (getHigherAgent() == null) {
                 //on se déplace
                 System.out.println("Personne n'est au dessus de " + getImage() + " donc il bouge");
-                Main.board.moveAgentFromTo(this, x);
+                Main.board.moveAgentTo(this, x);
 
                 setMustMove(false);
                 setTargetColumn(-1);
@@ -117,24 +105,32 @@ public class AgentCognitiveBrodcast extends Agent {
             } else {
                 //on demande à l'agent du dessus de se pousser
                 pousser();
+
+                if(getTargetColumn() == -1){
+                    //On se déplace pour quelqu'un d'autre qui nous interdit d'aller en forbiddenColumn
+                    ((AgentCognitiveBrodcast) getHigherAgent()).setForbiddenColumn(getForbiddenColumn());
+                } else {
+                    //On lui demande de se pousser pour notre propre interet
+                    System.out.println(getImage() + " interdit à " + getHigherAgent().getImage() + " d'aller en " + getTargetColumn());
+                    ((AgentCognitiveBrodcast) getHigherAgent()).setForbiddenColumn(getTargetColumn());
+                }
             }
         }
         sleep();
     }
 
     /***
-     * Push the agent above the current agent
+     * Find a column where the agent can move
      */
-    private void pousser() {
-        getHigherAgent().setMustMove(true);
+    private void moves() {
+        synchronized (Main.board) {
 
-        if(getTargetColumn() == -1){
-            //On se déplace pour quelqu'un d'autre qui nous interdit d'aller en forbiddenColumn
-            ((AgentCognitiveBrodcast) getHigherAgent()).setForbiddenColumn(getForbiddenColumn());
-        } else {
-            //On lui demande de se pousser pour notre propre interet
-            System.out.println(getImage() + " interdit à " + getHigherAgent().getImage() + " d'aller en " + getTargetColumn());
-            ((AgentCognitiveBrodcast) getHigherAgent()).setForbiddenColumn(getTargetColumn());
+            for(int i = 0; i < Main.board.NB_COLUMN; i++) {
+                if(i != getForbiddenColumn() && i != Main.board.getColumn(this)) {
+                    seDeplacer(i);
+                    break;
+                }
+            }
         }
     }
 }

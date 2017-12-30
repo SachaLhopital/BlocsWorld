@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/***
+ * Board of the system
+ */
 public class Board {
 
     public final int NB_COLUMN = 3;
@@ -15,14 +18,13 @@ public class Board {
     private int nbMovements;
 
     /***
-     * ATTENTION : allAgents should be given in the started order !
+     * WARNINGS : allAgents must be given in the "start" order !
      * @param allAgents
      */
     public Board (Agent... allAgents) {
 
         nbMovements = 0;
         agents = new HashMap();
-
         List<Agent> temp = new ArrayList<>();
 
         for(Agent a : allAgents) {
@@ -59,7 +61,7 @@ public class Board {
     }
 
     /***
-     * Run all agent in the board
+     * Run all agents
      */
     public void resolve() {
         for(int i = 0; i < agents.get(0).size(); i++) {
@@ -67,6 +69,10 @@ public class Board {
         }
     }
 
+    /***
+     * Check if the run is complete
+     * @return
+     */
     public synchronized boolean isNotComplete() {
         for(int i = 0; i < NB_COLUMN; i++) {
             for(int j = 0; j < agents.get(i).size(); j++) {
@@ -78,6 +84,11 @@ public class Board {
         return false;
     }
 
+    /***
+     * Get the column number where the agent is
+     * @param a
+     * @return
+     */
     public synchronized int getColumn(Agent a) {
         for(int i = 0; i < NB_COLUMN; i++) {
             for(int j = 0; j < agents.get(i).size(); j++) {
@@ -89,15 +100,16 @@ public class Board {
         return -1;
     }
 
-    public synchronized void moveAgentFromTo(Agent agent, int to) {
-
-        //debug
-        if(agent.getImage() == 'D') {
-            int x = 2;
-        }
+    /***
+     * Moves an agent to a target column
+     * (Also update all neigbours)
+     * @param agent
+     * @param targetColumn
+     */
+    public synchronized void moveAgentTo(Agent agent, int targetColumn) {
 
         //Mise à jour des voisins
-        Agent newLowerAgent = (agents.get(to).size() == 0) ? null : agents.get(to).get(agents.get(to).size() - 1);
+        Agent newLowerAgent = (agents.get(targetColumn).size() == 0) ? null : agents.get(targetColumn).get(agents.get(targetColumn).size() - 1);
 
         if(agent.getLowerAgent() != null) {
             agent.getLowerAgent().setHigherAgent(null);
@@ -111,56 +123,57 @@ public class Board {
         for(int i = 0; i < NB_COLUMN; i++) {
             agents.get(i).remove(agent);
         }
-        agents.get(to).add(agent);
+        agents.get(targetColumn).add(agent);
         agent.setLowerAgent(newLowerAgent);
         agent.setHigherAgent(null);
 
         printBoard();
     }
 
-    /****
-     * a broadcast to everyone else that he is in his target position
-     * @param a
+    /***
+     * Broadcast everyone that agent is in his target position
+     * @param agent
      */
-    public synchronized void broadcast(Agent a) {
+    public synchronized void broadcast(Agent agent) {
         for(int i = 0; i < NB_COLUMN; i++) {
             for(int j = 0; j < agents.get(i).size(); j++) {
-                ((AgentCognitiveBrodcast) agents.get(i).get(j)).setBroadcaster(a);
+                ((AgentCognitiveBrodcast) agents.get(i).get(j)).setBroadcaster(agent);
             }
         }
     }
 
+    /***
+     * Get the agent at the top of the columnNumber
+     * @param columnNumber
+     * @return
+     */
     public Agent getHeadOfColumn(int columnNumber) {
         return agents.get(columnNumber).size() > 0
                 ? agents.get(columnNumber).get(agents.get(columnNumber).size() - 1)
                 : null;
     }
 
-    public int getEmptiestColumn() {
+    /***
+     * Check if the columnNumber is in final state :
+     * |CD
+     * |
+     * |AB
+     * In the example above, the first and the second column return false,
+     * while the third one return true because 'A' and 'B' will never move.
+     * @param columnNumber
+     * @return
+     */
+    public boolean isColumnInFinalState(int columnNumber) {
 
-        int emptiestColumn = -1;
-
-        for(int i = 0; i < NB_COLUMN; i++) {
-
-            int currentSize = agents.get(i).size();
-
-            if(emptiestColumn == -1 || currentSize < emptiestColumn) {
-                emptiestColumn = currentSize;
-            }
+        if(agents.get(columnNumber).size() == 0) {
+            return false;
         }
-        return emptiestColumn;
-    }
-
-    public int getNumberOfAgentProperlyPositionnedForColumn(int columnNumber) {
-
-        int nbAgentProperlyPositionned = 0;
 
         for(int i = 0; i < agents.get(columnNumber).size(); i++) {
             if(! agents.get(columnNumber).get(i).isAtTargetPosition()) {
-                nbAgentProperlyPositionned--;
+                return false;
             }
         }
-        return nbAgentProperlyPositionned;
+        return true;
     }
-
 }
