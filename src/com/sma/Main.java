@@ -10,10 +10,10 @@ import java.util.Scanner;
 public class Main {
 
     public static Board board;
+    public static Agent a, b, c, d, e, f, g, h, i, j , k, l, m, n, o, p, q, r, s, t, u, v, w , x, y;
 
     public static void main(String[] args) {
 
-        Agent a, b, c, d;
         Scanner sc = new Scanner(System.in);
 
         System.out.println("-------------------------------------------\n"
@@ -33,8 +33,10 @@ public class Main {
                 b = new AgentReactive(a, 'B');
                 c = new AgentReactive(b, 'C');
                 d = new AgentReactive(c, 'D');
+                e = new AgentReactive(d, 'E');
+                f = new AgentReactive(e, 'F');
 
-                configureAndRun(a, b, c, d);
+                configureAndRun();
                 break;
 
             case "2":
@@ -42,8 +44,10 @@ public class Main {
                 b = new AgentCognitiveBrodcast(a, 'B');
                 c = new AgentCognitiveBrodcast(b, 'C');
                 d = new AgentCognitiveBrodcast(c, 'D');
+                e = new AgentCognitiveBrodcast(d, 'E');
+                f = new AgentCognitiveBrodcast(e, 'F');
 
-                configureAndRun(a, b, c, d);
+                configureAndRun();
                 break;
 
             case "3":
@@ -51,8 +55,10 @@ public class Main {
                 b = new AgentCognitiveIncreasing(a, 'B');
                 c = new AgentCognitiveIncreasing(b, 'C');
                 d = new AgentCognitiveIncreasing(c, 'D');
+                e = new AgentCognitiveIncreasing(d, 'E');
+                f = new AgentCognitiveIncreasing(e, 'F');
 
-                configureAndRun(a, b, c, d);
+                configureAndRun();
                 break;
 
             default:
@@ -63,25 +69,27 @@ public class Main {
 
     /***
      * Configure the initial board and run the game
-     * @param a
-     * @param b
-     * @param c
-     * @param d
      */
-    private static void configureAndRun(Agent a, Agent b, Agent c, Agent d) {
+    private static void configureAndRun() {
         b.setLowerAgent(null);
-        b.setHigherAgent(d);
+        b.setHigherAgent(e);
 
-        d.setLowerAgent(b);
+        e.setLowerAgent(b);
+        e.setHigherAgent(d);
+
+        d.setLowerAgent(e);
         d.setHigherAgent(a);
 
         a.setLowerAgent(d);
-        a.setHigherAgent(c);
+        a.setHigherAgent(f);
 
-        c.setLowerAgent(a);
+        f.setLowerAgent(a);
+        f.setHigherAgent(c);
+
+        c.setLowerAgent(f);
         c.setHigherAgent(null);
 
-        board = new Board(b, d, a, c);
+        board = new Board(b, e, d, a, f, c);
         board.resolve();
     }
 }
