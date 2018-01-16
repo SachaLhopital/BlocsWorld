@@ -6,7 +6,7 @@ import java.util.Random;
 /***
  * Reactive Agent
  * Moves randomly until it get in his target position.
- * If needeed, ask to the higher agent to moves also.
+ * If needed, ask to the higher agent to moves also.
  */
 public class AgentReactive extends Agent {
 

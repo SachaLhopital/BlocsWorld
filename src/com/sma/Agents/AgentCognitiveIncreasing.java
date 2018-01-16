@@ -3,7 +3,7 @@ package com.sma.Agents;
 import com.sma.Main;
 
 /***
- * Specific agent that doesn't take place on the bottom of someone grather then himself.
+ * Specific agent that doesn't take place on the bottom of someone greater then himself.
  * For instance : 'A' will never take place above 'B', unless there is no other options.
  */
 public class AgentCognitiveIncreasing extends Agent {
@@ -17,19 +17,10 @@ public class AgentCognitiveIncreasing extends Agent {
 
         while(Main.board.isNotComplete()) {
 
-            if(isMustMove()) {
-                //bouge n'importe où en essayant de respecter l'ordre croissant
-                System.out.println("\n" + getImage() + " is asking to move");
+            if(isMustMove() || !isAtTargetPosition()) {
                 moves();
-
-            } else {
-
-                if(isAtTargetPosition()) {
-                    //do nothing
-                } else {
-                    moves();
-                }
             }
+
             sleep();
         }
     }
